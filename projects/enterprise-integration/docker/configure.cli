@@ -1,0 +1,5 @@
+embed-server --server-config=standalone.xml --std-out=echo
+module add --name=com.oracle --resources=/tmp/ojdbc11.jar --dependencies=java.se,jakarta.transaction.api
+/subsystem=datasources/jdbc-driver=oracle:add(driver-name=oracle,driver-module-name=com.oracle,driver-class-name=oracle.jdbc.OracleDriver)
+/subsystem=datasources/data-source=OracleDS:add(jndi-name="java:/jdbc/OracleDS",driver-name=oracle,connection-url="jdbc:oracle:thin:@oracle:1521/FREEPDB1",user-name="LAB",password="${env.APP_PASSWORD}",jta=false,min-pool-size=1,max-pool-size=8,blocking-timeout-wait-millis=5000,validate-on-match=true,check-valid-connection-sql="SELECT 1 FROM DUAL")
+stop-embedded-server

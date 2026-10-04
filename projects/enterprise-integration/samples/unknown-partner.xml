@@ -1,0 +1,6 @@
+<Order>
+  <MessageId>failed-001</MessageId>
+  <Partner>NEWCO</Partner>
+  <Sku>CONTAINER</Sku>
+  <Quantity>2</Quantity>
+</Order>

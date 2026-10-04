@@ -1,0 +1,6 @@
+<Order>
+  <MessageId>demo-001</MessageId>
+  <Partner>ACME</Partner>
+  <Sku>PALLET</Sku>
+  <Quantity>12</Quantity>
+</Order>

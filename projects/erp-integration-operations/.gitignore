@@ -1,0 +1,20 @@
+node_modules/
+dist/
+.next/
+*.tsbuildinfo
+.env
+.env.local
+.env*.local
+*.log
+.DS_Store
+.firecrawl/
+
+# Local, replay-safe integration state. It contains customer order payloads and
+# must be stored in a managed database/key vault in a production deployment.
+webshop-sync/.data/
+
+# AL build artifacts
+al-extension/.alpackages/
+al-extension/*.app
+al-extension/.altemplates/
+al-extension/.vscode/rad.json

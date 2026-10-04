@@ -1,0 +1,28 @@
+WHENEVER SQLERROR EXIT SQL.SQLCODE
+ALTER SESSION SET CONTAINER = FREEPDB1;
+ALTER SESSION SET CURRENT_SCHEMA = LAB;
+CREATE TABLE partners (code VARCHAR2(40) PRIMARY KEY, name VARCHAR2(100) NOT NULL);
+INSERT INTO partners VALUES ('ACME', 'Acme Logistics');
+CREATE TABLE messages (
+ message_id VARCHAR2(64) PRIMARY KEY,
+ payload CLOB NOT NULL,
+ status VARCHAR2(12) DEFAULT 'RECEIVED' NOT NULL CHECK (status IN ('RECEIVED','FAILED','PROCESSED')),
+ attempts NUMBER DEFAULT 0 NOT NULL,
+ error_code VARCHAR2(80),
+ received_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+ updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+CREATE TABLE orders (
+ id NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+ message_id VARCHAR2(64) NOT NULL UNIQUE REFERENCES messages(message_id),
+ partner_code VARCHAR2(40) NOT NULL REFERENCES partners(code),
+ sku VARCHAR2(40) NOT NULL,
+ quantity NUMBER(8) NOT NULL CHECK (quantity > 0),
+ created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+CREATE INDEX messages_status_idx ON messages(status);
+CREATE INDEX orders_partner_idx ON orders(partner_code);
+CREATE VIEW partner_report AS
+ SELECT p.code, p.name, COUNT(o.id) AS order_count, NVL(SUM(o.quantity),0) AS total_quantity
+ FROM partners p LEFT JOIN orders o ON o.partner_code=p.code GROUP BY p.code,p.name;
+COMMIT;

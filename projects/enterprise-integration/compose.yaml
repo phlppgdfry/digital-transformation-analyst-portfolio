@@ -1,0 +1,30 @@
+name: enterprise-integration-lab
+services:
+  oracle:
+    image: gvenzl/oracle-free:23.26.3-slim
+    environment:
+      ORACLE_PASSWORD: ${ORACLE_PASSWORD:?Copy .env.example to .env first}
+      APP_USER: LAB
+      APP_USER_PASSWORD: ${APP_PASSWORD:?Copy .env.example to .env first}
+    volumes:
+      - oracle-data:/opt/oracle/oradata
+      - ./db/init.sql:/container-entrypoint-initdb.d/01-lab.sql:ro
+    healthcheck:
+      test: ["CMD", "healthcheck.sh"]
+      interval: 10s
+      timeout: 5s
+      retries: 60
+      start_period: 60s
+    shm_size: 1gb
+  wildfly:
+    build: .
+    environment:
+      APP_PASSWORD: ${APP_PASSWORD:?Copy .env.example to .env first}
+      JAVA_OPTS: -Xms128m -Xmx512m -Djava.net.preferIPv4Stack=true
+    depends_on:
+      oracle:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:${LAB_PORT:-18081}:8080"
+volumes:
+  oracle-data:

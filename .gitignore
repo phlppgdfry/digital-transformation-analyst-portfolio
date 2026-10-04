@@ -1,0 +1,25 @@
+# Local environment and credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.p12
+*.pfx
+*.key
+
+# Build output and local caches
+node_modules/
+.next/
+coverage/
+bin/
+obj/
+target/
+dist/
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.alpackages/
+.alcache/
+.DS_Store
+
