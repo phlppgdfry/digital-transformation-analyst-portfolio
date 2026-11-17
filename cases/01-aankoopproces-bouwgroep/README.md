@@ -39,7 +39,13 @@ Een fictieve middelgrote bouwgroep ontvangt werfaanvragen via e-mail en telefoon
 - [AS-IS BPMN 2.0](as-is.bpmn): aanvraag via mail/telefoon, handmatige overname, onduidelijke status.
 - [TO-BE BPMN 2.0](to-be.bpmn): digitale intake, regels, goedkeuring, ERP en statuslus.
 
-De BPMN-bestanden zijn importeerbare basisdiagrammen. Valideer lanes, lokale werkinstructies en uitzonderingen met gebruikers voordat ze als definitief proces gelden.
+De BPMN-bestanden bevatten nu ook diagramlayout (BPMN DI, gegenereerd met bpmn-auto-layout), zodat ze direct openen in Camunda Modeler of op bpmn.io. Bekijk ze ook [interactief op de case-site](https://phlppgdfry.github.io/digital-transformation-analyst-portfolio/#demo). Valideer lanes, lokale werkinstructies en uitzonderingen met gebruikers voordat ze als definitief proces gelden.
+
+**Modelcorrecties (17 november 2026):**
+
+- TO-BE: na "Werk status en auditspoor bij" vertrokken twee voorwaardeloze stromen naar *Orderreferentie gedeeld* én *Afwijzing met reden*. In BPMN is dat een parallelle splitsing: elke aanvraag zou in beide eindes terechtkomen. Goedgekeurde en afgewezen aanvragen hebben nu elk een eigen meldtaak.
+- TO-BE: een ERP-fout leidde naar een retry-lus zonder uitweg. Een beslissing "Nieuwe poging toegestaan?" stuurt na de limiet naar de exception queue (in scope), waar aankoop de oorzaak oplost.
+- AS-IS: "Aanvrager belt voor status" had geen inkomende stroom en kon dus nooit gebeuren. Een niet-onderbrekende timer op de goedkeuringsstap ("Na 2 dagen geen nieuws") start die taak nu.
 
 ## Kernrequirements
 

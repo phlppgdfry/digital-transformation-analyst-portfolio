@@ -1,7 +1,164 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_P2P_ASIS" targetNamespace="https://example.invalid/portfolio/p2p">
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_P2P_ASIS" targetNamespace="https://example.invalid/portfolio/p2p">
   <process id="Process_P2P_ASIS" name="AS-IS aankoopaanvraag (fictief)" isExecutable="false">
-    <startEvent id="Start_Request" name="Nood op werf"/><task id="Task_Email" name="Mail of bel aankoop"/><task id="Task_Retype" name="Neem gegevens over in ERP / Excel"/><exclusiveGateway id="Gateway_Complete" name="Gegevens volledig?"/><task id="Task_Clarify" name="Vraag ontbrekende info op"/><task id="Task_Approve" name="Zoek goedkeuring via losse kanalen"/><exclusiveGateway id="Gateway_Approved" name="Goedgekeurd?"/><task id="Task_CreateOrder" name="Maak aankooporder in ERP"/><task id="Task_StatusCall" name="Aanvrager belt voor status"/><endEvent id="End_Order" name="Order geplaatst"/><endEvent id="End_Rejected" name="Niet geplaatst"/>
-    <sequenceFlow id="f1" sourceRef="Start_Request" targetRef="Task_Email"/><sequenceFlow id="f2" sourceRef="Task_Email" targetRef="Task_Retype"/><sequenceFlow id="f3" sourceRef="Task_Retype" targetRef="Gateway_Complete"/><sequenceFlow id="f4" sourceRef="Gateway_Complete" targetRef="Task_Clarify" name="Nee"/><sequenceFlow id="f5" sourceRef="Task_Clarify" targetRef="Task_Retype"/><sequenceFlow id="f6" sourceRef="Gateway_Complete" targetRef="Task_Approve" name="Ja"/><sequenceFlow id="f7" sourceRef="Task_Approve" targetRef="Gateway_Approved"/><sequenceFlow id="f8" sourceRef="Gateway_Approved" targetRef="Task_CreateOrder" name="Ja"/><sequenceFlow id="f9" sourceRef="Task_CreateOrder" targetRef="End_Order"/><sequenceFlow id="f10" sourceRef="Gateway_Approved" targetRef="End_Rejected" name="Nee"/><sequenceFlow id="f11" sourceRef="Task_StatusCall" targetRef="Task_Approve" name="Opvolging"/>
+    <startEvent id="Start_Request" name="Nood op werf">
+      <outgoing>f1</outgoing>
+    </startEvent>
+    <task id="Task_Email" name="Mail of bel aankoop">
+      <incoming>f1</incoming>
+      <outgoing>f2</outgoing>
+    </task>
+    <task id="Task_Retype" name="Neem gegevens over in ERP / Excel">
+      <incoming>f2</incoming>
+      <incoming>f5</incoming>
+      <outgoing>f3</outgoing>
+    </task>
+    <exclusiveGateway id="Gateway_Complete" name="Gegevens volledig?">
+      <incoming>f3</incoming>
+      <outgoing>f4</outgoing>
+      <outgoing>f6</outgoing>
+    </exclusiveGateway>
+    <task id="Task_Clarify" name="Vraag ontbrekende info op">
+      <incoming>f4</incoming>
+      <outgoing>f5</outgoing>
+    </task>
+    <task id="Task_Approve" name="Zoek goedkeuring via losse kanalen">
+      <incoming>f6</incoming>
+      <outgoing>f7</outgoing>
+    </task>
+    <exclusiveGateway id="Gateway_Approved" name="Goedgekeurd?">
+      <incoming>f7</incoming>
+      <outgoing>f8</outgoing>
+      <outgoing>f10</outgoing>
+    </exclusiveGateway>
+    <task id="Task_CreateOrder" name="Maak aankooporder in ERP">
+      <incoming>f8</incoming>
+      <outgoing>f9</outgoing>
+    </task>
+    <boundaryEvent id="Timer_NoNews" name="Na 2 dagen geen nieuws" cancelActivity="false" attachedToRef="Task_Approve">
+      <outgoing>f11</outgoing>
+      <timerEventDefinition id="TimerDef_NoNews" />
+    </boundaryEvent>
+    <task id="Task_StatusCall" name="Aanvrager belt voor status">
+      <incoming>f11</incoming>
+      <outgoing>f12</outgoing>
+    </task>
+    <endEvent id="End_StatusKnown" name="Status (deels) gekend">
+      <incoming>f12</incoming>
+    </endEvent>
+    <endEvent id="End_Order" name="Order geplaatst">
+      <incoming>f9</incoming>
+    </endEvent>
+    <endEvent id="End_Rejected" name="Niet geplaatst">
+      <incoming>f10</incoming>
+    </endEvent>
+    <sequenceFlow id="f1" sourceRef="Start_Request" targetRef="Task_Email" />
+    <sequenceFlow id="f2" sourceRef="Task_Email" targetRef="Task_Retype" />
+    <sequenceFlow id="f3" sourceRef="Task_Retype" targetRef="Gateway_Complete" />
+    <sequenceFlow id="f4" name="Nee" sourceRef="Gateway_Complete" targetRef="Task_Clarify" />
+    <sequenceFlow id="f5" sourceRef="Task_Clarify" targetRef="Task_Retype" />
+    <sequenceFlow id="f6" name="Ja" sourceRef="Gateway_Complete" targetRef="Task_Approve" />
+    <sequenceFlow id="f7" sourceRef="Task_Approve" targetRef="Gateway_Approved" />
+    <sequenceFlow id="f8" name="Ja" sourceRef="Gateway_Approved" targetRef="Task_CreateOrder" />
+    <sequenceFlow id="f9" sourceRef="Task_CreateOrder" targetRef="End_Order" />
+    <sequenceFlow id="f10" name="Nee" sourceRef="Gateway_Approved" targetRef="End_Rejected" />
+    <sequenceFlow id="f11" sourceRef="Timer_NoNews" targetRef="Task_StatusCall" />
+    <sequenceFlow id="f12" sourceRef="Task_StatusCall" targetRef="End_StatusKnown" />
   </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_Process_P2P_ASIS">
+    <bpmndi:BPMNPlane id="BPMNPlane_Process_P2P_ASIS" bpmnElement="Process_P2P_ASIS">
+      <bpmndi:BPMNShape id="Start_Request_di" bpmnElement="Start_Request">
+        <dc:Bounds x="57" y="52" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Email_di" bpmnElement="Task_Email">
+        <dc:Bounds x="175" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Retype_di" bpmnElement="Task_Retype">
+        <dc:Bounds x="325" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_Complete_di" bpmnElement="Gateway_Complete" isMarkerVisible="true">
+        <dc:Bounds x="500" y="45" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Clarify_di" bpmnElement="Task_Clarify">
+        <dc:Bounds x="625" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Approve_di" bpmnElement="Task_Approve">
+        <dc:Bounds x="625" y="170" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Timer_NoNews_di" bpmnElement="Timer_NoNews">
+        <dc:Bounds x="657" y="232" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_Approved_di" bpmnElement="Gateway_Approved" isMarkerVisible="true">
+        <dc:Bounds x="800" y="185" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_CreateOrder_di" bpmnElement="Task_CreateOrder">
+        <dc:Bounds x="925" y="170" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_Order_di" bpmnElement="End_Order">
+        <dc:Bounds x="1107" y="192" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_Rejected_di" bpmnElement="End_Rejected">
+        <dc:Bounds x="957" y="332" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_StatusCall_di" bpmnElement="Task_StatusCall">
+        <dc:Bounds x="775" y="450" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_StatusKnown_di" bpmnElement="End_StatusKnown">
+        <dc:Bounds x="957" y="472" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="f1_di" bpmnElement="f1">
+        <di:waypoint x="93" y="70" />
+        <di:waypoint x="175" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f2_di" bpmnElement="f2">
+        <di:waypoint x="275" y="70" />
+        <di:waypoint x="325" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f3_di" bpmnElement="f3">
+        <di:waypoint x="425" y="70" />
+        <di:waypoint x="500" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f4_di" bpmnElement="f4">
+        <di:waypoint x="550" y="70" />
+        <di:waypoint x="625" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f6_di" bpmnElement="f6">
+        <di:waypoint x="525" y="95" />
+        <di:waypoint x="525" y="210" />
+        <di:waypoint x="625" y="210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f5_di" bpmnElement="f5">
+        <di:waypoint x="675" y="110" />
+        <di:waypoint x="675" y="140" />
+        <di:waypoint x="375" y="140" />
+        <di:waypoint x="375" y="110" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f7_di" bpmnElement="f7">
+        <di:waypoint x="725" y="210" />
+        <di:waypoint x="800" y="210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f11_di" bpmnElement="f11">
+        <di:waypoint x="675" y="268" />
+        <di:waypoint x="675" y="490" />
+        <di:waypoint x="775" y="490" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f8_di" bpmnElement="f8">
+        <di:waypoint x="850" y="210" />
+        <di:waypoint x="925" y="210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f10_di" bpmnElement="f10">
+        <di:waypoint x="825" y="235" />
+        <di:waypoint x="825" y="350" />
+        <di:waypoint x="957" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f9_di" bpmnElement="f9">
+        <di:waypoint x="1025" y="210" />
+        <di:waypoint x="1107" y="210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f12_di" bpmnElement="f12">
+        <di:waypoint x="875" y="490" />
+        <di:waypoint x="957" y="490" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
 </definitions>
