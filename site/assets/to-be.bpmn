@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_P2P_TOBE" targetNamespace="https://example.invalid/portfolio/p2p">
+  <process id="Process_P2P_TOBE" name="TO-BE digitale aankoopaanvraag (fictief)" isExecutable="false">
+    <startEvent id="Start_Request" name="Nood op werf">
+      <outgoing>f1</outgoing>
+    </startEvent>
+    <userTask id="Task_Form" name="Dien mobiele aanvraag in">
+      <incoming>f1</incoming>
+      <outgoing>f2</outgoing>
+    </userTask>
+    <serviceTask id="Task_Validate" name="Valideer verplichte velden en masterdata">
+      <incoming>f2</incoming>
+      <incoming>f5</incoming>
+      <outgoing>f3</outgoing>
+    </serviceTask>
+    <exclusiveGateway id="Gateway_Valid" name="Aanvraag geldig?">
+      <incoming>f3</incoming>
+      <outgoing>f4</outgoing>
+      <outgoing>f6</outgoing>
+    </exclusiveGateway>
+    <userTask id="Task_Correct" name="Corrigeer aanvraag">
+      <incoming>f4</incoming>
+      <outgoing>f5</outgoing>
+    </userTask>
+    <userTask id="Task_Review" name="Beoordeel aanvraag en budget">
+      <incoming>f6</incoming>
+      <outgoing>f7</outgoing>
+    </userTask>
+    <exclusiveGateway id="Gateway_Approved" name="Goedgekeurd?">
+      <incoming>f7</incoming>
+      <outgoing>f8</outgoing>
+      <outgoing>f17</outgoing>
+    </exclusiveGateway>
+    <serviceTask id="Task_ERP" name="Maak ERP-aankooporder (idempotent)">
+      <incoming>f8</incoming>
+      <incoming>f12</incoming>
+      <incoming>f14</incoming>
+      <outgoing>f9</outgoing>
+    </serviceTask>
+    <exclusiveGateway id="Gateway_ERP" name="ERP verwerkt?">
+      <incoming>f9</incoming>
+      <outgoing>f10</outgoing>
+      <outgoing>f15</outgoing>
+    </exclusiveGateway>
+    <exclusiveGateway id="Gateway_Retry" name="Nieuwe poging toegestaan?">
+      <incoming>f10</incoming>
+      <outgoing>f11</outgoing>
+      <outgoing>f13</outgoing>
+    </exclusiveGateway>
+    <serviceTask id="Task_Retry" name="Wacht en probeer opnieuw met dezelfde sleutel">
+      <incoming>f11</incoming>
+      <outgoing>f12</outgoing>
+    </serviceTask>
+    <userTask id="Task_Exception" name="Behandel uitzondering (aankoop)">
+      <incoming>f13</incoming>
+      <outgoing>f14</outgoing>
+    </userTask>
+    <serviceTask id="Task_Notify" name="Deel orderreferentie, werk status en audit bij">
+      <incoming>f15</incoming>
+      <outgoing>f16</outgoing>
+    </serviceTask>
+    <serviceTask id="Task_NotifyReject" name="Meld afwijzing met reden, werk audit bij">
+      <incoming>f17</incoming>
+      <outgoing>f18</outgoing>
+    </serviceTask>
+    <endEvent id="End_Order" name="Orderreferentie gedeeld">
+      <incoming>f16</incoming>
+    </endEvent>
+    <endEvent id="End_Rejected" name="Afwijzing met reden">
+      <incoming>f18</incoming>
+    </endEvent>
+    <sequenceFlow id="f1" sourceRef="Start_Request" targetRef="Task_Form" />
+    <sequenceFlow id="f2" sourceRef="Task_Form" targetRef="Task_Validate" />
+    <sequenceFlow id="f3" sourceRef="Task_Validate" targetRef="Gateway_Valid" />
+    <sequenceFlow id="f4" name="Nee" sourceRef="Gateway_Valid" targetRef="Task_Correct" />
+    <sequenceFlow id="f5" sourceRef="Task_Correct" targetRef="Task_Validate" />
+    <sequenceFlow id="f6" name="Ja" sourceRef="Gateway_Valid" targetRef="Task_Review" />
+    <sequenceFlow id="f7" sourceRef="Task_Review" targetRef="Gateway_Approved" />
+    <sequenceFlow id="f8" name="Ja" sourceRef="Gateway_Approved" targetRef="Task_ERP" />
+    <sequenceFlow id="f9" sourceRef="Task_ERP" targetRef="Gateway_ERP" />
+    <sequenceFlow id="f10" name="Nee" sourceRef="Gateway_ERP" targetRef="Gateway_Retry" />
+    <sequenceFlow id="f11" name="Ja" sourceRef="Gateway_Retry" targetRef="Task_Retry" />
+    <sequenceFlow id="f12" name="Veilige retry" sourceRef="Task_Retry" targetRef="Task_ERP" />
+    <sequenceFlow id="f13" name="Nee, limiet bereikt" sourceRef="Gateway_Retry" targetRef="Task_Exception" />
+    <sequenceFlow id="f14" name="Na correctie" sourceRef="Task_Exception" targetRef="Task_ERP" />
+    <sequenceFlow id="f15" name="Ja" sourceRef="Gateway_ERP" targetRef="Task_Notify" />
+    <sequenceFlow id="f16" sourceRef="Task_Notify" targetRef="End_Order" />
+    <sequenceFlow id="f17" name="Nee" sourceRef="Gateway_Approved" targetRef="Task_NotifyReject" />
+    <sequenceFlow id="f18" sourceRef="Task_NotifyReject" targetRef="End_Rejected" />
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_Process_P2P_TOBE">
+    <bpmndi:BPMNPlane id="BPMNPlane_Process_P2P_TOBE" bpmnElement="Process_P2P_TOBE">
+      <bpmndi:BPMNShape id="Start_Request_di" bpmnElement="Start_Request">
+        <dc:Bounds x="57" y="52" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Form_di" bpmnElement="Task_Form">
+        <dc:Bounds x="175" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Validate_di" bpmnElement="Task_Validate">
+        <dc:Bounds x="325" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_Valid_di" bpmnElement="Gateway_Valid" isMarkerVisible="true">
+        <dc:Bounds x="500" y="45" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Correct_di" bpmnElement="Task_Correct">
+        <dc:Bounds x="625" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Review_di" bpmnElement="Task_Review">
+        <dc:Bounds x="625" y="170" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_Approved_di" bpmnElement="Gateway_Approved" isMarkerVisible="true">
+        <dc:Bounds x="800" y="185" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_ERP_di" bpmnElement="Task_ERP">
+        <dc:Bounds x="925" y="170" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_ERP_di" bpmnElement="Gateway_ERP" isMarkerVisible="true">
+        <dc:Bounds x="1100" y="185" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_Retry_di" bpmnElement="Gateway_Retry" isMarkerVisible="true">
+        <dc:Bounds x="1550" y="185" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Retry_di" bpmnElement="Task_Retry">
+        <dc:Bounds x="1675" y="170" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_NotifyReject_di" bpmnElement="Task_NotifyReject">
+        <dc:Bounds x="925" y="310" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_Rejected_di" bpmnElement="End_Rejected">
+        <dc:Bounds x="1107" y="332" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Notify_di" bpmnElement="Task_Notify">
+        <dc:Bounds x="1375" y="310" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_Order_di" bpmnElement="End_Order">
+        <dc:Bounds x="1557" y="332" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Exception_di" bpmnElement="Task_Exception">
+        <dc:Bounds x="1825" y="310" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="f1_di" bpmnElement="f1">
+        <di:waypoint x="93" y="70" />
+        <di:waypoint x="175" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f2_di" bpmnElement="f2">
+        <di:waypoint x="275" y="70" />
+        <di:waypoint x="325" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f3_di" bpmnElement="f3">
+        <di:waypoint x="425" y="70" />
+        <di:waypoint x="500" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f4_di" bpmnElement="f4">
+        <di:waypoint x="550" y="70" />
+        <di:waypoint x="625" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f6_di" bpmnElement="f6">
+        <di:waypoint x="525" y="95" />
+        <di:waypoint x="525" y="210" />
+        <di:waypoint x="625" y="210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f5_di" bpmnElement="f5">
+        <di:waypoint x="675" y="110" />
+        <di:waypoint x="675" y="140" />
+        <di:waypoint x="375" y="140" />
+        <di:waypoint x="375" y="110" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f7_di" bpmnElement="f7">
+        <di:waypoint x="725" y="210" />
+        <di:waypoint x="800" y="210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f8_di" bpmnElement="f8">
+        <di:waypoint x="850" y="210" />
+        <di:waypoint x="925" y="210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f17_di" bpmnElement="f17">
+        <di:waypoint x="825" y="235" />
+        <di:waypoint x="825" y="350" />
+        <di:waypoint x="925" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f9_di" bpmnElement="f9">
+        <di:waypoint x="1025" y="210" />
+        <di:waypoint x="1100" y="210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f10_di" bpmnElement="f10">
+        <di:waypoint x="1150" y="210" />
+        <di:waypoint x="1550" y="210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f15_di" bpmnElement="f15">
+        <di:waypoint x="1150" y="210" />
+        <di:waypoint x="1200" y="210" />
+        <di:waypoint x="1200" y="280" />
+        <di:waypoint x="1350" y="280" />
+        <di:waypoint x="1350" y="350" />
+        <di:waypoint x="1375" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f11_di" bpmnElement="f11">
+        <di:waypoint x="1600" y="210" />
+        <di:waypoint x="1675" y="210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f13_di" bpmnElement="f13">
+        <di:waypoint x="1600" y="210" />
+        <di:waypoint x="1650" y="210" />
+        <di:waypoint x="1650" y="280" />
+        <di:waypoint x="1800" y="280" />
+        <di:waypoint x="1800" y="350" />
+        <di:waypoint x="1825" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f12_di" bpmnElement="f12">
+        <di:waypoint x="1725" y="250" />
+        <di:waypoint x="1725" y="280" />
+        <di:waypoint x="975" y="280" />
+        <di:waypoint x="975" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f18_di" bpmnElement="f18">
+        <di:waypoint x="1025" y="350" />
+        <di:waypoint x="1107" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f16_di" bpmnElement="f16">
+        <di:waypoint x="1475" y="350" />
+        <di:waypoint x="1557" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f14_di" bpmnElement="f14">
+        <di:waypoint x="1875" y="390" />
+        <di:waypoint x="1875" y="420" />
+        <di:waypoint x="975" y="420" />
+        <di:waypoint x="975" y="250" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

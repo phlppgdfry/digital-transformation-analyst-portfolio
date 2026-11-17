@@ -1,5 +1,11 @@
 # Digital Transformation Analyst Portfolio
 
+<!-- showcase:start -->
+> **[▶ Bekijk de case-site](https://phlppgdfry.github.io/digital-transformation-analyst-portfolio/)** — het aankoopproces interactief in BPMN 2.0 (AS-IS en TO-BE), met per taak de requirements en UAT-tests die ze afdekt, plus links naar de werkende prototypes.
+
+[![Bekijk de case-site: digital-transformation-analyst-portfolio](site/demo.png)](https://phlppgdfry.github.io/digital-transformation-analyst-portfolio/)
+<!-- showcase:end -->
+
 Een Nederlandstalig portfolio met uitgewerkte businessanalyses en werkende prototypes voor ERP, procesautomatisering, integraties en AI. Het is opgezet als sollicitatieportfolio voor rollen zoals Business Analyst, Functional Analyst en Digital Transformation Analyst.
 
 > **Fictieve cases:** namen, processen, cijfers en voorbeelddata in de cases zijn verzonnen. De projecten demonstreren aanpak en technische prototypes; ze beweren geen implementatie bij Verhelst Group of een andere genoemde werkgever.
